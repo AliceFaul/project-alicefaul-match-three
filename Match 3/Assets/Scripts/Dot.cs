@@ -1,9 +1,65 @@
 using UnityEngine;
 
 public class Dot : MonoBehaviour {
+    public int row;
+    public int column;
+    public int targetX;
+    public int targetY;
+
+    private GameObject _otherDot;
+    private Board _board;
+
     private Vector2 _firstTouchPosition;
     private Vector2 _finalTouchPosition;
+    private Vector2 _tempPosition; // Temporary variable to store the position of the dot while it is moving
     public float swipeAngle = 0;
+
+    // Initialize
+    private void Start() {
+        _board = FindFirstObjectByType<Board>();
+        // Set the targetX and targetY to the current position of the dot,
+        // which will be used for movement and matching logic
+        targetX = (int)transform.position.x;
+        targetY = (int)transform.position.y;
+        row = targetY;
+        column = targetX;
+    }
+
+    private void Update() {
+        targetX = column;
+        targetY = row;
+        if(Mathf.Abs(targetX - transform.position.x) > .1) {
+            // If the targetX is more than 0.1 units away from the current x position of the dot,
+            // move the dot towards the targetX position
+            _tempPosition = new Vector2(targetX, transform.position.y);
+            transform.position = Vector2.Lerp(transform.position, _tempPosition, 5f);
+        }
+        else {
+            // If the targetX is within 0.1 units of the current x position,
+            // snap the dot to the targetX position
+            _tempPosition = new Vector2(targetX, transform.position.y);
+            transform.position = _tempPosition;
+            // Update the reference to this dot in the _board's allDots array to reflect its new position
+            _board.allDots[column, row] = this.gameObject;
+        }
+        
+        if (Mathf.Abs(targetY - transform.position.y) > .1)
+        {
+            // If the targetX is more than 0.1 units away from the current x position of the dot,
+            // move the dot towards the targetX position
+            _tempPosition = new Vector2(transform.position.x, targetY);
+            transform.position = Vector2.Lerp(transform.position, _tempPosition, 5f);
+        }
+        else
+        {
+            // If the targetX is within 0.1 units of the current x position,
+            // snap the dot to the targetX position
+            _tempPosition = new Vector2(transform.position.x, targetY);
+            transform.position = _tempPosition;
+            // Update the reference to this dot in the _board's allDots array to reflect its new position
+            _board.allDots[column, row] = this.gameObject;
+        }
+    }
 
     private void OnMouseDown() {
         // Convert the mouse position to world coordinates and store it as the first touch position
@@ -25,5 +81,34 @@ public class Dot : MonoBehaviour {
         swipeAngle = Mathf.Atan2(_finalTouchPosition.y - _firstTouchPosition.y, 
             _finalTouchPosition.x - _firstTouchPosition.x) * 180 / Mathf.PI;
         Debug.Log(swipeAngle);
+        MovePieces(); // Call the MovePieces method to move the dots based on the calculated swipe angle
+    }
+
+    private void MovePieces() { 
+        if(swipeAngle > -45 && swipeAngle <= 45 && column < _board.width) {
+            // Right swipe
+            _otherDot = _board.allDots[column + 1, row];
+            _otherDot.GetComponent<Dot>().column -= 1;
+            column += 1;
+            Debug.Log($"Right swipe: column {column}, row {row}");
+        } else if(swipeAngle > 45 && swipeAngle <= 135 && row < _board.height) {
+            // Up swipe
+            _otherDot = _board.allDots[column, row + 1];
+            _otherDot.GetComponent<Dot>().row -= 1;
+            row += 1;
+            Debug.Log($"Up swipe: column {column}, row {row}");
+        } else if((swipeAngle < -45 && swipeAngle >= -135) && row > 0) {
+            // Down swipe
+            _otherDot = _board.allDots[column, row - 1];
+            _otherDot.GetComponent<Dot>().row += 1;
+            row -= 1;
+            Debug.Log($"Down swipe: column {column}, row {row}");
+        } else if((swipeAngle > 135 || swipeAngle <= -135) && column > 0) {
+            // Left swipe
+            _otherDot = _board.allDots[column - 1, row];
+            _otherDot.GetComponent<Dot>().column += 1;
+            column -= 1;
+            Debug.Log($"Left swipe: column {column}, row {row}");
+        }
     }
 }

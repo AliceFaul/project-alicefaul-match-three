@@ -7,11 +7,11 @@ public class Board : MonoBehaviour {
     public GameObject[] dots; // Array of possible dot prefabs to spawn on the tiles
 
     private BackgroundTile[,] _allTiles;
-    private GameObject[,] _allDots;
+    public GameObject[,] allDots;
 
     private void Start() {
         _allTiles = new BackgroundTile[width, height];
-        _allDots = new GameObject[width, height];
+        allDots = new GameObject[width, height];
         Setup();
     }
 
@@ -26,7 +26,7 @@ public class Board : MonoBehaviour {
                 GameObject dot = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity) as GameObject; // Instantiate the selected dot at the tile's position
                 dot.transform.parent = this.transform; // Set the parent of the dot to be the tile for better organization in the hierarchy
                 dot.name = $"Dot {i} {j}"; // Name the dot for easier identification in the hierarchy
-                _allDots[i, j] = dot; // Store the reference to the instantiated dot in the _allDots array
+                allDots[i, j] = dot; // Store the reference to the instantiated dot in the _allDots array
             }
         }
     }
