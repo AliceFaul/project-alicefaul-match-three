@@ -50,26 +50,25 @@ public class Dot : MonoBehaviour {
             // move the dot towards the targetX position
             _tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = Vector2.Lerp(transform.position, _tempPosition, 20f * Time.deltaTime);
-        }
-        else {
+            if(_board.allDots[column, row] != this.gameObject) {
+                _board.allDots[column, row] = this.gameObject;
+            }
+        } else {
             // If the targetX is within 0.1 units of the current x position,
             // snap the dot to the targetX position
             _tempPosition = new Vector2(targetX, transform.position.y);
             transform.position = _tempPosition;
-            // Update the reference to this dot in the _board's allDots array to reflect its new position
-            _board.allDots[column, row] = this.gameObject;
         }
         
-        if (Mathf.Abs(targetY - transform.position.y) > .1)
-        {
+        if(Mathf.Abs(targetY - transform.position.y) > .1) {
             _tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = Vector2.Lerp(transform.position, _tempPosition, 20f * Time.deltaTime);
-        }
-        else
-        {
+            if(_board.allDots[column, row] != this.gameObject) {
+                _board.allDots[column, row] = this.gameObject;
+            }
+        } else {
             _tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = _tempPosition;
-            _board.allDots[column, row] = this.gameObject;
         }
     }
 

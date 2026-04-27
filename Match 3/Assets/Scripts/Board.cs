@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Board : MonoBehaviour {
@@ -79,6 +80,7 @@ public class Board : MonoBehaviour {
                 }
             }
         }
+        StartCoroutine(DecreaseRowCo());
     }
 
     // Method to destroy the matched dots at the given column and row, if they are marked as matched
@@ -87,5 +89,22 @@ public class Board : MonoBehaviour {
             Destroy(allDots[column, row]);
             allDots[column, row] = null;
         }
+    }
+
+    private IEnumerator DecreaseRowCo() {
+        int nullCount = 0;
+        for(int i = 0; i < width; i++) { 
+            for(int j = 0; j < height; j++) {
+                if(allDots[i, j] == null) { 
+                    nullCount++;
+                } else if(nullCount > 0) {
+                    // Collapse the dots above the null positions
+                    allDots[i, j].GetComponent<Dot>().row -= nullCount;
+                    allDots[i, j] = null;
+                }
+            }
+            nullCount = 0;
+        }
+        yield return new WaitForSeconds(.4f);
     }
 }
