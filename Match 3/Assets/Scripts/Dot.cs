@@ -1,14 +1,20 @@
+using System.Collections;
 using UnityEditor.Rendering;
 using UnityEngine;
 
 public class Dot : MonoBehaviour {
+    [Header("Board Variales")]
     public int row;
     public int column;
+    public int previousRow;
+    public int previousColumn;
+
     public int targetX;
     public int targetY;
 
     public bool isMatched = false;
 
+    // === Private variables ===
     private GameObject _otherDot;
     private Board _board;
 
@@ -26,6 +32,8 @@ public class Dot : MonoBehaviour {
         targetY = (int)transform.position.y;
         row = targetY;
         column = targetX;
+        previousRow = row;
+        previousColumn = column;
     }
 
     private void Update() {
@@ -90,13 +98,13 @@ public class Dot : MonoBehaviour {
     }
 
     private void MovePieces() { 
-        if(swipeAngle > -45 && swipeAngle <= 45 && column < _board.width) {
+        if(swipeAngle > -45 && swipeAngle <= 45 && column < _board.width - 1) {
             // Right swipe
             _otherDot = _board.allDots[column + 1, row];
             _otherDot.GetComponent<Dot>().column -= 1;
             column += 1;
             Debug.Log($"Right swipe: column {column}, row {row}");
-        } else if(swipeAngle > 45 && swipeAngle <= 135 && row < _board.height) {
+        } else if(swipeAngle > 45 && swipeAngle <= 135 && row < _board.height - 1) {
             // Up swipe
             _otherDot = _board.allDots[column, row + 1];
             _otherDot.GetComponent<Dot>().row -= 1;
@@ -114,6 +122,22 @@ public class Dot : MonoBehaviour {
             _otherDot.GetComponent<Dot>().column += 1;
             column -= 1;
             Debug.Log($"Left swipe: column {column}, row {row}");
+        }
+        StartCoroutine(CheckMoveCo()); // Check if not matched, snap back to original pos
+    }
+
+    private IEnumerator CheckMoveCo() {
+        yield return new WaitForSeconds(.2f);
+        if(_otherDot != null) {
+            // Check if this dot or the other dot has a match after the move,
+            // and if not, swap them back to their original positions
+            if (!isMatched && !_otherDot.GetComponent<Dot>().isMatched) { 
+                _otherDot.GetComponent<Dot>().row = row;
+                _otherDot.GetComponent<Dot>().column = column;
+                row = previousRow;
+                column = previousColumn;
+            }
+            _otherDot = null;
         }
     }
 
