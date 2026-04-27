@@ -1,3 +1,4 @@
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class Dot : MonoBehaviour {
@@ -5,6 +6,8 @@ public class Dot : MonoBehaviour {
     public int column;
     public int targetX;
     public int targetY;
+
+    public bool isMatched = false;
 
     private GameObject _otherDot;
     private Board _board;
@@ -26,13 +29,20 @@ public class Dot : MonoBehaviour {
     }
 
     private void Update() {
+        FindMatches(); // Call the FindMatches method to check for matches and update the isMatched property accordingly
+        if (isMatched) { 
+            var spriteRenderer = GetComponent<SpriteRenderer>();
+            if(spriteRenderer != null) { 
+                spriteRenderer.color = new Color(1f, 1f, 1f, .5f); // Set the color of the dot to be semi-transparent to indicate it is matched
+            }
+        }
         targetX = column;
         targetY = row;
         if(Mathf.Abs(targetX - transform.position.x) > .1) {
             // If the targetX is more than 0.1 units away from the current x position of the dot,
             // move the dot towards the targetX position
             _tempPosition = new Vector2(targetX, transform.position.y);
-            transform.position = Vector2.Lerp(transform.position, _tempPosition, 5f);
+            transform.position = Vector2.Lerp(transform.position, _tempPosition, 20f * Time.deltaTime);
         }
         else {
             // If the targetX is within 0.1 units of the current x position,
@@ -45,18 +55,13 @@ public class Dot : MonoBehaviour {
         
         if (Mathf.Abs(targetY - transform.position.y) > .1)
         {
-            // If the targetX is more than 0.1 units away from the current x position of the dot,
-            // move the dot towards the targetX position
             _tempPosition = new Vector2(transform.position.x, targetY);
-            transform.position = Vector2.Lerp(transform.position, _tempPosition, 5f);
+            transform.position = Vector2.Lerp(transform.position, _tempPosition, 20f * Time.deltaTime);
         }
         else
         {
-            // If the targetX is within 0.1 units of the current x position,
-            // snap the dot to the targetX position
             _tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = _tempPosition;
-            // Update the reference to this dot in the _board's allDots array to reflect its new position
             _board.allDots[column, row] = this.gameObject;
         }
     }
@@ -109,6 +114,33 @@ public class Dot : MonoBehaviour {
             _otherDot.GetComponent<Dot>().column += 1;
             column -= 1;
             Debug.Log($"Left swipe: column {column}, row {row}");
+        }
+    }
+
+    private void FindMatches() { 
+        // Horizontal match check
+        if(column > 0 && column < _board.width - 1) { 
+            GameObject leftDot1 = _board.allDots[column - 1, row];
+            GameObject rightDot1 = _board.allDots[column + 1, row];
+            // Check if the left and right dots are not null and have the same tag as this dot,
+            // which indicates a match
+            if (leftDot1 != null && rightDot1 != null && leftDot1.tag == this.gameObject.tag && rightDot1.tag == this.gameObject.tag) { 
+                leftDot1.GetComponent<Dot>().isMatched = true;
+                rightDot1.GetComponent<Dot>().isMatched = true;
+                isMatched = true;
+            }
+        }
+        // Vertical match check
+        if (row > 0 && row < _board.height - 1) {
+            GameObject upDot1 = _board.allDots[column, row + 1];
+            GameObject downDot1 = _board.allDots[column, row - 1];
+            // Check if the up and down dots are not null and have the same tag as this dot,
+            // which indicates a match
+            if (upDot1 != null && downDot1 != null && upDot1.tag == this.gameObject.tag && downDot1.tag == this.gameObject.tag) {
+                upDot1.GetComponent<Dot>().isMatched = true;
+                downDot1.GetComponent<Dot>().isMatched = true;
+                isMatched = true;
+            }
         }
     }
 }
