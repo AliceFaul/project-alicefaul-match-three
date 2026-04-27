@@ -33,8 +33,6 @@ public class Dot : MonoBehaviour {
         targetY = (int)transform.position.y;
         row = targetY;
         column = targetX;
-        previousRow = row;
-        previousColumn = column;
     }
 
     private void Update() {
@@ -99,8 +97,10 @@ public class Dot : MonoBehaviour {
         }
     }
 
-    private void MovePieces() { 
-        if(swipeAngle > -45 && swipeAngle <= 45 && column < _board.width - 1) {
+    private void MovePieces() {
+        previousRow = row;
+        previousColumn = column;
+        if (swipeAngle > -45 && swipeAngle <= 45 && column < _board.width - 1) {
             // Right swipe
             _otherDot = _board.allDots[column + 1, row];
             _otherDot.GetComponent<Dot>().column -= 1;
@@ -129,7 +129,7 @@ public class Dot : MonoBehaviour {
     }
 
     private IEnumerator CheckMoveCo() {
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.3f);
         if(_otherDot != null) {
             // Check if this dot or the other dot has a match after the move,
             // and if not, swap them back to their original positions
@@ -138,6 +138,9 @@ public class Dot : MonoBehaviour {
                 _otherDot.GetComponent<Dot>().column = column;
                 row = previousRow;
                 column = previousColumn;
+            } else {
+                // If there is a match, call the DestroyMatches method on the board to destroy the matched dots
+                _board.DestroyMatches();
             }
             _otherDot = null;
         }
@@ -150,14 +153,14 @@ public class Dot : MonoBehaviour {
             GameObject rightDot1 = _board.allDots[column + 1, row];
             // Check if the left and right dots are not null and have the same tag as this dot,
             // which indicates a match
-            if (leftDot1 != null && rightDot1 != null && leftDot1.tag == this.gameObject.tag && rightDot1.tag == this.gameObject.tag) { 
+            if(leftDot1 != null && rightDot1 != null && leftDot1.tag == this.gameObject.tag && rightDot1.tag == this.gameObject.tag) { 
                 leftDot1.GetComponent<Dot>().isMatched = true;
                 rightDot1.GetComponent<Dot>().isMatched = true;
                 isMatched = true;
             }
         }
         // Vertical match check
-        if (row > 0 && row < _board.height - 1) {
+        if(row > 0 && row < _board.height - 1) {
             GameObject upDot1 = _board.allDots[column, row + 1];
             GameObject downDot1 = _board.allDots[column, row - 1];
             // Check if the up and down dots are not null and have the same tag as this dot,

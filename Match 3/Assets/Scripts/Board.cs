@@ -67,4 +67,25 @@ public class Board : MonoBehaviour {
 
         return false;
     }
+
+    // Method to destroy all the matched dots on the board,
+    // which will be called after checking for matches and marking the matched dots accordingly
+    public void DestroyMatches() { 
+        for(int i = 0; i < width; i++) { 
+            for(int j = 0; j < height; j++) {
+                if(allDots[i, j] != null) {
+                    // Destroy the matched dots at the current column and row, if they are marked as matched
+                    DestroyMatchesAt(i, j);
+                }
+            }
+        }
+    }
+
+    // Method to destroy the matched dots at the given column and row, if they are marked as matched
+    private void DestroyMatchesAt(int column, int row) { 
+        if (allDots[column, row].GetComponent<Dot>().isMatched) {
+            Destroy(allDots[column, row]);
+            allDots[column, row] = null;
+        }
+    }
 }
