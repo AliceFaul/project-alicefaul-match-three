@@ -29,10 +29,10 @@ public class Dot : MonoBehaviour {
         _board = FindFirstObjectByType<Board>();
         // Set the targetX and targetY to the current position of the dot,
         // which will be used for movement and matching logic
-        targetX = (int)transform.position.x;
-        targetY = (int)transform.position.y;
-        row = targetY;
-        column = targetX;
+        //targetX = (int)transform.position.x;
+        //targetY = (int)transform.position.y;
+        //row = targetY;
+        //column = targetX;
     }
 
     private void Update() {

@@ -4,6 +4,8 @@ using UnityEngine;
 public class Board : MonoBehaviour {
     public int width;
     public int height;
+    public int offSet;
+
     public GameObject tilePrefab;
     public GameObject[] dots; // Array of possible dot prefabs to spawn on the tiles
 
@@ -33,6 +35,8 @@ public class Board : MonoBehaviour {
                 }
                 maxIterations = 0;
                 GameObject dot = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity) as GameObject; // Instantiate the selected dot at the tile's position
+                dot.GetComponent<Dot>().row = j;
+                dot.GetComponent<Dot>().column = i;
                 dot.transform.parent = this.transform; // Set the parent of the dot to be the tile for better organization in the hierarchy
                 dot.name = $"Dot {i} {j}"; // Name the dot for easier identification in the hierarchy
                 allDots[i, j] = dot; // Store the reference to the instantiated dot in the _allDots array
@@ -130,12 +134,14 @@ public class Board : MonoBehaviour {
         for(int i = 0; i < width; i++) { 
             for(int j = 0; j < height; j++) {
                 if(allDots[i, j] == null) { 
-                    Vector2 tempPosition = new Vector2(i, j);
+                    Vector2 tempPosition = new Vector2(i, j + offSet);
                     int dotToUse = Random.Range(0, dots.Length);
                     GameObject dot = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity) as GameObject; // Create a new dot at the null position
                     dot.transform.parent = this.transform;
                     dot.name = $"Dot {i} {j}";
                     allDots[i, j] = dot; // Store the reference to the new dot in the _allDots array
+                    dot.GetComponent<Dot>().row = j;
+                    dot.GetComponent<Dot>().column = i;
                 }
             }
         }

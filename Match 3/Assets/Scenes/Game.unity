@@ -200,7 +200,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2981131, g: 0.2981131, b: 0.2981131, a: 0}
+  m_BackGroundColor: {r: 0.23773581, g: 0.23773581, b: 0.23773581, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -371,6 +371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Board
   width: 6
   height: 10
+  offSet: 5
   tilePrefab: {fileID: 1484285035250046002, guid: dcc1f0d1e4b528242a28860aba8304a3, type: 3}
   dots:
   - {fileID: 57500987825798304, guid: 6d793d6821df282429effbebc4362606, type: 3}
