@@ -73,14 +73,18 @@ public class Dot : MonoBehaviour {
     }
 
     private void OnMouseDown() {
-        // Convert the mouse position to world coordinates and store it as the first touch position
-        _firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (_board.currentState == GameState.Move) {
+            // Convert the mouse position to world coordinates and store it as the first touch position
+            _firstTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        }
     }
 
     private void OnMouseUp() {
-        // Convert the mouse position to world coordinates and store it as the final touch position
-        _finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        CalculateAngle();
+        if (_board.currentState == GameState.Move) {
+            // Convert the mouse position to world coordinates and store it as the final touch position
+            _finalTouchPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            CalculateAngle();
+        }
     }
 
     private void CalculateAngle() {
@@ -93,6 +97,10 @@ public class Dot : MonoBehaviour {
             swipeAngle = Mathf.Atan2(_finalTouchPosition.y - _firstTouchPosition.y,
                 _finalTouchPosition.x - _firstTouchPosition.x) * 180 / Mathf.PI;
             MovePieces(); // Call the MovePieces method to move the dots based on the calculated swipe angle
+            _board.currentState = GameState.Wait;
+        } else {
+            // If the swipe does not meet the minimum distance requirement, reset the swipe angle and return to the Move state
+            _board.currentState = GameState.Move;
         }
     }
 
@@ -137,9 +145,13 @@ public class Dot : MonoBehaviour {
                 _otherDot.GetComponent<Dot>().column = column;
                 row = previousRow;
                 column = previousColumn;
+                yield return new WaitForSeconds(.5f);
+                _board.currentState = GameState.Move;
             } else {
                 // If there is a match, call the DestroyMatches method on the board to destroy the matched dots
                 _board.DestroyMatches();
+                //yield return new WaitForSeconds(.5f);
+                //_board.currentState = GameState.Move;
             }
             _otherDot = null;
         }

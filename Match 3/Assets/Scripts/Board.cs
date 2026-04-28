@@ -1,7 +1,15 @@
 using System.Collections;
 using UnityEngine;
 
+// Simple enum to represent the current state of the game
+public enum GameState { 
+    Wait, // The game is waiting for the player to make a move or for the board to finish updating after a move
+    Move // The player is currently making a move, such as swapping two dots or selecting a dot to move
+}
+
 public class Board : MonoBehaviour {
+    public GameState currentState = GameState.Move;
+    
     public int width;
     public int height;
     public int offSet;
@@ -127,6 +135,8 @@ public class Board : MonoBehaviour {
             yield return new WaitForSeconds(.5f);
             DestroyMatches();
         }
+        yield return new WaitForSeconds(.5f);
+        currentState = GameState.Move;
     }
 
     // Helper method to refill the board with new dots after the matched dots have been destroyed
