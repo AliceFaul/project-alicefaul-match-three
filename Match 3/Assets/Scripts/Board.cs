@@ -19,8 +19,10 @@ public class Board : MonoBehaviour {
 
     private BackgroundTile[,] _allTiles;
     public GameObject[,] allDots;
+    private MatchFinder _matchFinder;
 
     private void Start() {
+        _matchFinder = FindFirstObjectByType<MatchFinder>();
         _allTiles = new BackgroundTile[width, height];
         allDots = new GameObject[width, height];
         Setup();
@@ -100,6 +102,7 @@ public class Board : MonoBehaviour {
     // Method to destroy the matched dots at the given column and row, if they are marked as matched
     private void DestroyMatchesAt(int column, int row) { 
         if (allDots[column, row].GetComponent<Dot>().isMatched) {
+            _matchFinder.currentMatches.Remove(allDots[column, row]);
             Destroy(allDots[column, row]);
             allDots[column, row] = null;
         }
