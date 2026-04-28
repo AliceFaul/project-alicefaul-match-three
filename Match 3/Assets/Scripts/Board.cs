@@ -40,6 +40,8 @@ public class Board : MonoBehaviour {
         }
     }
 
+
+
     // Method to check if there are any matches of three or more dots in a row or column, starting from the given column and row
     private bool MatchesAt(int column, int row, GameObject piece) {
         if (column > 1 && row > 1) {
@@ -106,5 +108,51 @@ public class Board : MonoBehaviour {
             nullCount = 0;
         }
         yield return new WaitForSeconds(.4f);
+        // After collapsing the dots, fill the board with new dots and check for any new matches then destroy them accordingly
+        StartCoroutine(FillBoardCo());
+    }
+
+    // Coroutine to fill the board with new dots after the matched dots have been destroyed
+    // and check for any new matches that may have been created by the new dots
+    private IEnumerator FillBoardCo() {
+        RefillBoard();
+        yield return new WaitForSeconds(.5f);
+        // After refilling the board, check for any new matches that may have been created
+        // by the new dots and destroy them accordingly
+        while (MatchesOnBoard()) { 
+            yield return new WaitForSeconds(.5f);
+            DestroyMatches();
+        }
+    }
+
+    // Helper method to refill the board with new dots after the matched dots have been destroyed
+    private void RefillBoard() { 
+        for(int i = 0; i < width; i++) { 
+            for(int j = 0; j < height; j++) {
+                if(allDots[i, j] == null) { 
+                    Vector2 tempPosition = new Vector2(i, j);
+                    int dotToUse = Random.Range(0, dots.Length);
+                    GameObject dot = Instantiate(dots[dotToUse], tempPosition, Quaternion.identity) as GameObject; // Create a new dot at the null position
+                    dot.transform.parent = this.transform;
+                    dot.name = $"Dot {i} {j}";
+                    allDots[i, j] = dot; // Store the reference to the new dot in the _allDots array
+                }
+            }
+        }
+    }
+
+    // Helper method to check if there are any matches of three in row or column on the board
+    // after refilling the board with new dots
+    private bool MatchesOnBoard() { 
+        for(int i = 0; i < width; i++) { 
+            for(int j = 0; j < height; j++) {
+                if(allDots[i, j] != null) {
+                    if(allDots[i, j].GetComponent<Dot>().isMatched) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
