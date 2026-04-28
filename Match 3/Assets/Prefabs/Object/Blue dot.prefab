@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: -5290374780835383089}
   - component: {fileID: -2485884315938605778}
   m_Layer: 0
-  m_Name: Orange dot
-  m_TagString: Orange
+  m_Name: Blue dot
+  m_TagString: Blue
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -60,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 9c3d7c89a8293794d8a0caacf4d6ad80, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: c77a605d1e667da4493f7465a237a340, type: 3}
-  m_Color: {r: 0.9803922, g: 0.5803922, b: 0.043137256, a: 1}
+  m_Color: {r: 0.03529412, g: 0.015686275, b: 0.9960785, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -143,7 +143,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Dot
   row: 0
   column: 0
+  previousRow: 0
+  previousColumn: 0
   targetX: 0
   targetY: 0
   isMatched: 0
   swipeAngle: 0
+  swipeResist: 1

@@ -5,12 +5,12 @@ TagManager:
   serializedVersion: 3
   tags:
   - Green
-  - Orange
   - Pink
   - Purple
   - Red
   - Teal
   - Yellow
+  - Blue
   layers:
   - Default
   - TransparentFX
