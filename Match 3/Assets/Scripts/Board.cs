@@ -170,7 +170,7 @@ public class Board : MonoBehaviour {
                 }
             }
         }
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSeconds(.2f);
         // After collapsing the dots, fill the board with new dots and check for any new matches then destroy them accordingly
         StartCoroutine(FillBoardCo());
     }
@@ -183,7 +183,7 @@ public class Board : MonoBehaviour {
         // After refilling the board, check for any new matches that may have been created
         // by the new dots and destroy them accordingly
         while (MatchesOnBoard()) {
-            yield return new WaitForSeconds(.2f);
+            yield return new WaitForSeconds(.1f);
             DestroyMatches();
         }
         yield return new WaitForSeconds(.5f);

@@ -41,12 +41,12 @@ public class Dot : MonoBehaviour {
 
     private void Update() {
         // FindMatches();
-        if (isMatched) { 
-            var spriteRenderer = GetComponent<SpriteRenderer>();
-            if(spriteRenderer != null) { 
-                spriteRenderer.color = new Color(1f, 1f, 1f, .5f); // Set the color of the dot to be semi-transparent to indicate it is matched
-            }
-        }
+        //if (isMatched) { 
+        //    var spriteRenderer = GetComponent<SpriteRenderer>();
+        //    if(spriteRenderer != null) { 
+        //        spriteRenderer.color = new Color(1f, 1f, 1f, .5f); // Set the color of the dot to be semi-transparent to indicate it is matched
+        //    }
+        //}
         targetX = column;
         targetY = row;
         if(Mathf.Abs(targetX - transform.position.x) > .1) {
@@ -144,7 +144,7 @@ public class Dot : MonoBehaviour {
     }
 
     private IEnumerator CheckMoveCo() {
-        yield return new WaitForSeconds(.3f);
+        yield return new WaitForSeconds(.25f);
         if (_otherDot != null) {
             // Check if this dot or the other dot has a match after the move,
             // and if not, swap them back to their original positions
