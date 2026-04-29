@@ -14,8 +14,12 @@ public class MatchFinder : MonoBehaviour {
         StartCoroutine(FindAllMachesCo());
     }
 
+    public IEnumerator FindAllMatchesCo() { 
+        yield return StartCoroutine(FindAllMachesCo());
+    }
+
     private IEnumerator FindAllMachesCo() { 
-        yield return new WaitForSeconds(.2f);
+        yield return new WaitForSeconds(.1f);
         for(int i = 0; i < _board.width; i++) { 
             for(int j = 0; j < _board.height; j++) { 
                 GameObject currentDot = _board.allDots[i, j];

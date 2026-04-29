@@ -14,7 +14,11 @@ public class Board : MonoBehaviour {
     public int height;
     public int offSet;
 
+    //public int comboCounter = 0;
+    //public bool isProcessing = false;
+
     public GameObject tilePrefab;
+    public GameObject breakEffect;
     public GameObject[] dots; // Array of possible dot prefabs to spawn on the tiles
 
     private BackgroundTile[,] _allTiles;
@@ -35,6 +39,7 @@ public class Board : MonoBehaviour {
                 GameObject backgroundTile = Instantiate(tilePrefab, tempPosition, Quaternion.identity) as GameObject;
                 backgroundTile.transform.parent = this.transform; // Set the parent of the tile to be the Board object
                 backgroundTile.name = $"Tile {i} {j}"; // Name the tile for easier identification in the hierarchy
+                
                 int dotToUse = Random.Range(0, dots.Length); // Randomly select a dot prefab from the array
                 int maxIterations = 0;
                 while(MatchesAt(i, j, dots[dotToUse]) && maxIterations < 100) {
@@ -85,6 +90,33 @@ public class Board : MonoBehaviour {
         return false;
     }
 
+    //public IEnumerator ProcessMatchesCo() {
+    //    if(isProcessing) {
+    //        yield break; // Exit the coroutine if it is already processing matches to prevent multiple simultaneous executions
+    //    }
+    //    isProcessing = true; // Set the processing flag to true to indicate that the coroutine is currently processing matches
+    //    comboCounter = 0;
+    //    while(true) {
+    //        _matchFinder.currentMatches.Clear();
+    //        yield return StartCoroutine(_matchFinder.FindAllMatchesCo());
+    //        if(_matchFinder.currentMatches.Count == 0) {
+    //            comboCounter = 0;
+    //            break; // Exit the coroutine if there are no matches found
+    //        }
+    //        comboCounter++;
+    //        Debug.Log($"Combo count: {comboCounter}"); // Log the current combo count for debugging purposes
+            
+    //        DestroyMatches();
+    //        yield return new WaitForSeconds(.1f);
+    //        yield return StartCoroutine(DecreaseRowCo());
+    //        yield return new WaitForSeconds(.1f);
+    //        yield return StartCoroutine(FillBoardCo());
+    //    }
+    //    comboCounter = 0; // Reset the combo counter after processing all matches
+    //    isProcessing = false;
+    //    currentState = GameState.Move; // Set the game state back to Move after processing matches and updating the board
+    //}
+
     // Method to destroy all the matched dots on the board,
     // which will be called after checking for matches and marking the matched dots accordingly
     public void DestroyMatches() { 
@@ -103,24 +135,40 @@ public class Board : MonoBehaviour {
     private void DestroyMatchesAt(int column, int row) { 
         if (allDots[column, row].GetComponent<Dot>().isMatched) {
             _matchFinder.currentMatches.Remove(allDots[column, row]);
+            // Instantiate the break effect at the position of the matched dot
+            GameObject effect = Instantiate(
+                breakEffect, 
+                allDots[column, row].transform.position, 
+                Quaternion.identity) as GameObject;
+            //float scale = 1f + comboCounter * .2f;
+            //effect.transform.localScale = Vector3.one * scale;
+
+            var color = allDots[column, row].GetComponent<Dot>().dotColor; // Get the color of the matched dot
+            var particle = effect?.GetComponent<ParticleSystem>();
+            var main = particle.main;
+            main.startColor = color; // Set the start color of the particle system to match the color of the matched dot
+            
+            Destroy(effect, .5f); // Destroy the break effect after a short delay
             Destroy(allDots[column, row]);
             allDots[column, row] = null;
         }
     }
 
     private IEnumerator DecreaseRowCo() {
-        int nullCount = 0;
+        yield return new WaitForSeconds(.2f); // Short delay to allow the break effect to play
+        // int nullCount = 0;
         for(int i = 0; i < width; i++) { 
-            for(int j = 0; j < height; j++) {
+            int nullCount = 0; // Reset the null count for each column
+            for (int j = 0; j < height; j++) {
                 if(allDots[i, j] == null) { 
                     nullCount++;
                 } else if(nullCount > 0) {
                     // Collapse the dots above the null positions
                     allDots[i, j].GetComponent<Dot>().row -= nullCount;
+                    // allDots[i, j - nullCount] = allDots[i, j];
                     allDots[i, j] = null;
                 }
             }
-            nullCount = 0;
         }
         yield return new WaitForSeconds(.4f);
         // After collapsing the dots, fill the board with new dots and check for any new matches then destroy them accordingly
@@ -131,11 +179,11 @@ public class Board : MonoBehaviour {
     // and check for any new matches that may have been created by the new dots
     private IEnumerator FillBoardCo() {
         RefillBoard();
-        yield return new WaitForSeconds(.5f);
+        yield return new WaitForSeconds(.2f);
         // After refilling the board, check for any new matches that may have been created
         // by the new dots and destroy them accordingly
-        while (MatchesOnBoard()) { 
-            yield return new WaitForSeconds(.5f);
+        while (MatchesOnBoard()) {
+            yield return new WaitForSeconds(.2f);
             DestroyMatches();
         }
         yield return new WaitForSeconds(.5f);

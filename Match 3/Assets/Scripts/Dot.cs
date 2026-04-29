@@ -10,6 +10,7 @@ public class Dot : MonoBehaviour {
 
     public int targetX;
     public int targetY;
+    public Color dotColor;
 
     public bool isMatched = false;
 
@@ -29,6 +30,7 @@ public class Dot : MonoBehaviour {
     private void Start() {
         _board = FindFirstObjectByType<Board>();
         _matchFinder = FindFirstObjectByType<MatchFinder>();
+        dotColor = GetComponent<SpriteRenderer>().color;
         // Set the targetX and targetY to the current position of the dot,
         // which will be used for movement and matching logic
         //targetX = (int)transform.position.x;
@@ -154,10 +156,7 @@ public class Dot : MonoBehaviour {
                 yield return new WaitForSeconds(.5f);
                 _board.currentState = GameState.Move;
             } else {
-                // If there is a match, call the DestroyMatches method on the board to destroy the matched dots
                 _board.DestroyMatches();
-                //yield return new WaitForSeconds(.5f);
-                //_board.currentState = GameState.Move;
             }
             _otherDot = null;
         }
