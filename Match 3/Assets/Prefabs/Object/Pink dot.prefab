@@ -60,7 +60,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9c3d7c89a8293794d8a0caacf4d6ad80, type: 2}
+  - {fileID: 2100000, guid: 3589e2918383f9c499250ff02bffaeeb, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -147,6 +147,7 @@ MonoBehaviour:
   previousColumn: 0
   targetX: 0
   targetY: 0
+  dotColor: {r: 1, g: 0.6156863, b: 0.87843144, a: 0}
   isMatched: 0
   swipeAngle: 0
   swipeResist: 1
