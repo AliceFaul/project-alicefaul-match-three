@@ -30,7 +30,7 @@ public class Dot : MonoBehaviour {
     private void Start() {
         _board = FindFirstObjectByType<Board>();
         _matchFinder = FindFirstObjectByType<MatchFinder>();
-        dotColor = GetComponent<SpriteRenderer>().color;
+        // dotColor = GetComponent<SpriteRenderer>().color;
         // Set the targetX and targetY to the current position of the dot,
         // which will be used for movement and matching logic
         //targetX = (int)transform.position.x;
