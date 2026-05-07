@@ -55,17 +55,17 @@ Material:
     m_Floats:
     - _BombBlend: 0
     - _EnableExternalAlpha: 0
-    - _GlowAmount: 5
+    - _GlowAmount: 1
     - _Intensity: 1
     - _Speed: 1
     - _StripeWidth: 0.5
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}
-    - _Angle: {r: 0, g: 4, b: 0, a: 0}
+    - _Angle: {r: 4, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
-    - _StripeColor: {r: 0.078431375, g: 0.95686275, b: 0, a: 1}
+    - _StripeColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &7102854279786053032

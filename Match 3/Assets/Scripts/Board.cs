@@ -136,19 +136,24 @@ public class Board : MonoBehaviour {
         if (allDots[column, row].GetComponent<Dot>().isMatched) {
             _matchFinder.currentMatches.Remove(allDots[column, row]);
             // Instantiate the break effect at the position of the matched dot
+            var position = allDots[column, row].transform.position;
+            position.z = 0f; // Set the z position of the break effect to be in front of the dots for better visibility
             GameObject effect = Instantiate(
                 breakEffect, 
-                allDots[column, row].transform.position, 
+                position, 
                 Quaternion.identity) as GameObject;
             //float scale = 1f + comboCounter * .2f;
             //effect.transform.localScale = Vector3.one * scale;
 
             var color = allDots[column, row].GetComponent<Dot>().dotColor; // Get the color of the matched dot
             var particle = effect?.GetComponent<ParticleSystem>();
-            var main = particle.main;
-            main.startColor = color; // Set the start color of the particle system to match the color of the matched dot
+            if(particle != null) { 
+                var main = particle.main;
+                main.startColor = color;
+                particle.Play();
+            }
             
-            Destroy(effect, .5f); // Destroy the break effect after a short delay
+            Destroy(effect, 1f); // Destroy the break effect after a short delay
             Destroy(allDots[column, row]);
             allDots[column, row] = null;
         }

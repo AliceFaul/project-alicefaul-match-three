@@ -11,6 +11,8 @@ TagManager:
   - Teal
   - Yellow
   - Blue
+  - Black
+  - Rainbow
   layers:
   - Default
   - TransparentFX
