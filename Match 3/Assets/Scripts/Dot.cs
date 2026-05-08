@@ -21,7 +21,7 @@ public class Dot : MonoBehaviour {
     public bool isMatched = false;
 
     // === Private variables ===
-    private GameObject _otherDot;
+    public GameObject _otherDot;
     private Board _board;
     private MatchFinder _matchFinder;
 
@@ -80,11 +80,11 @@ public class Dot : MonoBehaviour {
     }
 
     // Testing and debug bomb features
-    private void OnMouseOver() {
-        if(Input.GetMouseButtonDown(0)) { 
-            MakeBomb(BombType.Row);
-        }
-    }
+    //private void OnMouseOver() {
+    //    if(Input.GetMouseButtonDown(0)) { 
+    //        MakeBomb(BombType.Row);
+    //    }
+    //}
 
     private void OnMouseDown() {
         if (_board.currentState == GameState.Move) {
@@ -114,6 +114,7 @@ public class Dot : MonoBehaviour {
             if(_otherDot != null) {
                 _board.currentState = GameState.Wait;
             }
+            _board.currentDot = this;
         } else {
             // If the swipe does not meet the minimum distance requirement, reset the swipe angle and return to the Move state
             _board.currentState = GameState.Move;
@@ -162,17 +163,18 @@ public class Dot : MonoBehaviour {
                 row = previousRow;
                 column = previousColumn;
                 yield return new WaitForSeconds(.5f);
+                _board.currentDot = null;
                 _board.currentState = GameState.Move;
             } else {
                 _board.DestroyMatches();
             }
-            _otherDot = null;
+            // _otherDot = null;
         }
     }
 
     // Method to make this dot a bomb of the specified type (column or row), which will affect the way it is destroyed and the matches it creates
     // Set the appropriate properties and visual effects for the bomb based on its type
-    private void MakeBomb(BombType type) {
+    public void MakeBomb(BombType type) {
         bombType = type;
         _renderer.GetPropertyBlock(_mpb);
         _mpb.SetFloat("_BombBlend", 1f);
@@ -189,7 +191,7 @@ public class Dot : MonoBehaviour {
 
     // Helper method to clear the bomb properties
     // and visual effects from this dot, resetting it to a normal state
-    private void ClearBomb() { 
+    public void ClearBomb() { 
         bombType = BombType.None;
         _renderer.GetPropertyBlock(_mpb);
         _mpb.SetFloat("_BombBlend", 0f);

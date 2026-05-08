@@ -127,4 +127,24 @@ public class MatchFinder : MonoBehaviour {
         }
         return dots;
     }
+
+    public void CheckBombs() {
+        // If the current piece is matched, make it a bomb
+        if(_board.currentDot != null) { 
+            if(_board.currentDot.isMatched) {
+                _board.currentDot.isMatched = false;
+                int typeOfBomb = Random.Range(0, 99);
+                if(typeOfBomb < 50) { 
+                    // 50% chance to spawn a row bomb
+                    _board.currentDot.MakeBomb(BombType.Row);
+                } else {
+                    // 50% chance to spawn a column bomb
+                    _board.currentDot.MakeBomb(BombType.Column);
+                }
+            } 
+            //else if(_board.currentDot._otherDot.GetComponent<Dot>().isMatched) {
+            //    // If the other piece in the swap is a bomb, make it a bomb as well
+            //}
+        }
+    }
 }

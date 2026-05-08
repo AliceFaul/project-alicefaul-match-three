@@ -22,6 +22,7 @@ public class Board : MonoBehaviour {
     public GameObject[] dots; // Array of possible dot prefabs to spawn on the tiles
 
     private BackgroundTile[,] _allTiles;
+    public Dot currentDot;
     public GameObject[,] allDots;
     private MatchFinder _matchFinder;
 
@@ -133,7 +134,11 @@ public class Board : MonoBehaviour {
 
     // Method to destroy the matched dots at the given column and row, if they are marked as matched
     private void DestroyMatchesAt(int column, int row) { 
-        if (allDots[column, row].GetComponent<Dot>().isMatched) {
+        if(allDots[column, row].GetComponent<Dot>().isMatched) {
+            // Check how many elements in the current matches list
+            if(_matchFinder.currentMatches.Count == 4 || _matchFinder.currentMatches.Count == 7) {
+                _matchFinder.CheckBombs();
+            }
             _matchFinder.currentMatches.Remove(allDots[column, row]);
             // Instantiate the break effect at the position of the matched dot
             var position = allDots[column, row].transform.position;
@@ -191,6 +196,7 @@ public class Board : MonoBehaviour {
             yield return new WaitForSeconds(.1f);
             DestroyMatches();
         }
+        _matchFinder.currentMatches.Clear(); // Clear the current matches list after processing all matches and updating the board
         yield return new WaitForSeconds(.5f);
         currentState = GameState.Move;
     }
