@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 public class MatchFinder : MonoBehaviour {
     private Board _board;
@@ -28,7 +29,23 @@ public class MatchFinder : MonoBehaviour {
                         GameObject leftDot = _board.allDots[i - 1, j];
                         GameObject rightDot = _board.allDots[i + 1, j];
                         if(leftDot != null && rightDot != null) { 
-                            if(leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) { 
+                            if(leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) {
+                                // If any of the three dots in the match is a row bomb, mark all pieces in that row as matched
+                                if(currentDot.GetComponent<Dot>().bombType == BombType.Row ||
+                                    leftDot.GetComponent<Dot>().bombType == BombType.Row || 
+                                    rightDot.GetComponent<Dot>().bombType == BombType.Row) 
+                                {
+                                    currentMatches.Union(GetRowPieces(j));
+                                }
+                                if(currentDot.GetComponent<Dot>().bombType == BombType.Column) { 
+                                    currentMatches.Union(GetColumnPieces(i));
+                                }
+                                if(leftDot.GetComponent<Dot>().bombType == BombType.Column) { 
+                                    currentMatches.Union(GetColumnPieces(i - 1));
+                                }
+                                if(rightDot.GetComponent<Dot>().bombType == BombType.Column) { 
+                                    currentMatches.Union(GetColumnPieces(i + 1));
+                                }
                                 if(!currentMatches.Contains(leftDot)) { 
                                     currentMatches.Add(leftDot);
                                 }
@@ -48,7 +65,23 @@ public class MatchFinder : MonoBehaviour {
                         GameObject upDot = _board.allDots[i, j + 1];
                         GameObject downDot = _board.allDots[i, j - 1];
                         if(upDot != null && downDot != null) { 
-                            if(upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) { 
+                            if(upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) {
+                                // If any of the three dots in the match is a column bomb, mark all pieces in that column as matched
+                                if(currentDot.GetComponent<Dot>().bombType == BombType.Column ||
+                                    upDot.GetComponent<Dot>().bombType == BombType.Column ||
+                                    downDot.GetComponent<Dot>().bombType == BombType.Column) 
+                                { 
+                                    currentMatches.Union(GetColumnPieces(i));
+                                }
+                                if(currentDot.GetComponent<Dot>().bombType == BombType.Row) { 
+                                    currentMatches.Union(GetRowPieces(j));
+                                }
+                                if(upDot.GetComponent<Dot>().bombType == BombType.Row) { 
+                                    currentMatches.Union(GetRowPieces(j + 1));
+                                }
+                                if(downDot.GetComponent<Dot>().bombType == BombType.Row) { 
+                                    currentMatches.Union(GetRowPieces(j - 1));
+                                }
                                 if(!currentMatches.Contains(upDot)) { 
                                     currentMatches.Add(upDot);
                                 }
@@ -67,5 +100,31 @@ public class MatchFinder : MonoBehaviour {
                 }
             }
         }
+    }
+
+    // === Powerup Methods ===
+    private List<GameObject> GetColumnPieces(int column) { 
+        List<GameObject> dots = new();
+        for(int i = 0; i < _board.height; i++) {
+            var dot = _board.allDots[column, i];
+            if(dot != null) { 
+                dots.Add(dot);
+                dot.GetComponent<Dot>().isMatched = true;
+            }
+        }
+
+        return dots;
+    }
+
+    private List<GameObject> GetRowPieces(int row) { 
+        List<GameObject> dots = new();
+        for(int i = 0; i < _board.width; i++) {
+            var dot = _board.allDots[i, row];
+            if(dot != null) { 
+                dots.Add(dot);
+                dot.GetComponent<Dot>().isMatched = true;
+            }
+        }
+        return dots;
     }
 }

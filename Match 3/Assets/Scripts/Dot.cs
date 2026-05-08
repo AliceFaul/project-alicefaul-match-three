@@ -34,8 +34,6 @@ public class Dot : MonoBehaviour {
     public float swipeResist = 1f; // Minimum distance the swipe must cover to be registered as a valid swipe
 
     [Header("Powerup Stuff")]
-    public bool isColumnBomb;
-    public bool isRowBomb;
     public BombType bombType; // Enum to specify the type of bomb (column or row)
     private SpriteRenderer _renderer;
     private MaterialPropertyBlock _mpb;
@@ -85,7 +83,6 @@ public class Dot : MonoBehaviour {
     private void OnMouseOver() {
         if(Input.GetMouseButtonDown(0)) { 
             MakeBomb(BombType.Row);
-            Debug.Log("Set Row bomb");
         }
     }
 
@@ -181,11 +178,9 @@ public class Dot : MonoBehaviour {
         _mpb.SetFloat("_BombBlend", 1f);
         switch(type) {
             case BombType.Column:
-                isColumnBomb = true;
                 _mpb.SetVector("_Angle", new Vector2(4, 0));
                 break;
             case BombType.Row:
-                isRowBomb = true;
                 _mpb.SetVector("_Angle", new Vector2(0, 4));
                 break;
         }
@@ -196,8 +191,6 @@ public class Dot : MonoBehaviour {
     // and visual effects from this dot, resetting it to a normal state
     private void ClearBomb() { 
         bombType = BombType.None;
-        isColumnBomb = false;
-        isRowBomb = false;
         _renderer.GetPropertyBlock(_mpb);
         _mpb.SetFloat("_BombBlend", 0f);
         _renderer.SetPropertyBlock(_mpb);
