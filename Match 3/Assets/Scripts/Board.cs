@@ -197,6 +197,7 @@ public class Board : MonoBehaviour {
             DestroyMatches();
         }
         _matchFinder.currentMatches.Clear(); // Clear the current matches list after processing all matches and updating the board
+        currentDot = null; // Reset the current dot
         yield return new WaitForSeconds(.5f);
         currentState = GameState.Move;
     }

@@ -141,10 +141,21 @@ public class MatchFinder : MonoBehaviour {
                     // 50% chance to spawn a column bomb
                     _board.currentDot.MakeBomb(BombType.Column);
                 }
-            } 
-            //else if(_board.currentDot._otherDot.GetComponent<Dot>().isMatched) {
-            //    // If the other piece in the swap is a bomb, make it a bomb as well
-            //}
+            } else if(_board.currentDot._otherDot != null) {
+                // If the other piece is matched, make it a bomb
+                var otherDot = _board.currentDot._otherDot.GetComponent<Dot>();
+                if(otherDot != null) {
+                    otherDot.isMatched = false;
+                    int typeOfBomb = Random.Range(0, 99);
+                    if(typeOfBomb < 50) { 
+                        // 50% chance to spawn a row bomb
+                        otherDot.MakeBomb(BombType.Row);
+                    } else {
+                        // 50% chance to spawn a column bomb
+                        otherDot.MakeBomb(BombType.Column);
+                    }
+                }
+            }
         }
     }
 }
