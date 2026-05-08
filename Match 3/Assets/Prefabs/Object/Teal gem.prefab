@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7718098479514619343}
   m_Layer: 0
   m_Name: Teal gem
-  m_TagString: Red
+  m_TagString: Teal
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -151,3 +151,6 @@ MonoBehaviour:
   isMatched: 0
   swipeAngle: 0
   swipeResist: 1
+  isColumnBomb: 0
+  isRowBomb: 0
+  bombType: 0

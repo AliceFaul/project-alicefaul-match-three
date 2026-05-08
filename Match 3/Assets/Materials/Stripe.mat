@@ -58,7 +58,7 @@ Material:
     - _GlowAmount: 1
     - _Intensity: 1
     - _Speed: 1
-    - _StripeWidth: 0.5
+    - _StripeWidth: 0.7
     - _ZWrite: 0
     m_Colors:
     - White: {r: 1, g: 1, b: 1, a: 1}

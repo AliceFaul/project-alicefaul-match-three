@@ -1,6 +1,12 @@
 using System.Collections;
 using UnityEngine;
 
+public enum BombType {
+    Column,
+    Row,
+    None
+}
+
 public class Dot : MonoBehaviour {
     [Header("Board Variales")]
     public int row;
@@ -22,31 +28,28 @@ public class Dot : MonoBehaviour {
     private Vector2 _firstTouchPosition;
     private Vector2 _finalTouchPosition;
     private Vector2 _tempPosition; // Temporary variable to store the position of the dot while it is moving
-    
+
+    [Header("Swipe Stuff")]
     public float swipeAngle = 0;
     public float swipeResist = 1f; // Minimum distance the swipe must cover to be registered as a valid swipe
+
+    [Header("Powerup Stuff")]
+    public bool isColumnBomb;
+    public bool isRowBomb;
+    public BombType bombType; // Enum to specify the type of bomb (column or row)
+    private SpriteRenderer _renderer;
+    private MaterialPropertyBlock _mpb;
 
     // Initialize
     private void Start() {
         _board = FindFirstObjectByType<Board>();
         _matchFinder = FindFirstObjectByType<MatchFinder>();
-        // dotColor = GetComponent<SpriteRenderer>().color;
-        // Set the targetX and targetY to the current position of the dot,
-        // which will be used for movement and matching logic
-        //targetX = (int)transform.position.x;
-        //targetY = (int)transform.position.y;
-        //row = targetY;
-        //column = targetX;
+        _renderer = GetComponent<SpriteRenderer>();
+        _mpb = new MaterialPropertyBlock();
+        ClearBomb();
     }
 
     private void Update() {
-        // FindMatches();
-        //if (isMatched) { 
-        //    var spriteRenderer = GetComponent<SpriteRenderer>();
-        //    if(spriteRenderer != null) { 
-        //        spriteRenderer.color = new Color(1f, 1f, 1f, .5f); // Set the color of the dot to be semi-transparent to indicate it is matched
-        //    }
-        //}
         targetX = column;
         targetY = row;
         if(Mathf.Abs(targetX - transform.position.x) > .1) {
@@ -75,6 +78,14 @@ public class Dot : MonoBehaviour {
         } else {
             _tempPosition = new Vector2(transform.position.x, targetY);
             transform.position = _tempPosition;
+        }
+    }
+
+    // Testing and debug bomb features
+    private void OnMouseOver() {
+        if(Input.GetMouseButtonDown(0)) { 
+            MakeBomb(BombType.Row);
+            Debug.Log("Set Row bomb");
         }
     }
 
@@ -160,6 +171,36 @@ public class Dot : MonoBehaviour {
             }
             _otherDot = null;
         }
+    }
+
+    // Method to make this dot a bomb of the specified type (column or row), which will affect the way it is destroyed and the matches it creates
+    // Set the appropriate properties and visual effects for the bomb based on its type
+    private void MakeBomb(BombType type) {
+        bombType = type;
+        _renderer.GetPropertyBlock(_mpb);
+        _mpb.SetFloat("_BombBlend", 1f);
+        switch(type) {
+            case BombType.Column:
+                isColumnBomb = true;
+                _mpb.SetVector("_Angle", new Vector2(4, 0));
+                break;
+            case BombType.Row:
+                isRowBomb = true;
+                _mpb.SetVector("_Angle", new Vector2(0, 4));
+                break;
+        }
+        _renderer.SetPropertyBlock(_mpb);
+    }
+
+    // Helper method to clear the bomb properties
+    // and visual effects from this dot, resetting it to a normal state
+    private void ClearBomb() { 
+        bombType = BombType.None;
+        isColumnBomb = false;
+        isRowBomb = false;
+        _renderer.GetPropertyBlock(_mpb);
+        _mpb.SetFloat("_BombBlend", 0f);
+        _renderer.SetPropertyBlock(_mpb);
     }
 
     //private void FindMatches() { 
