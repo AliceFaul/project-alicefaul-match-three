@@ -4,6 +4,7 @@ using UnityEngine;
 public enum BombType {
     Column,
     Row,
+    Color,
     None
 }
 
@@ -35,6 +36,7 @@ public class Dot : MonoBehaviour {
 
     [Header("Powerup Stuff")]
     public BombType bombType; // Enum to specify the type of bomb (column or row)
+    public GameObject colorBomb;
     private SpriteRenderer _renderer;
     private MaterialPropertyBlock _mpb;
 
@@ -82,7 +84,7 @@ public class Dot : MonoBehaviour {
     // Testing and debug bomb features
     //private void OnMouseOver() {
     //    if(Input.GetMouseButtonDown(0)) { 
-    //        MakeBomb(BombType.Row);
+    //        MakeColorBomb();
     //    }
     //}
 
@@ -153,7 +155,18 @@ public class Dot : MonoBehaviour {
     }
 
     private IEnumerator CheckMoveCo() {
+        if(bombType == BombType.Color) {
+            // this dot is a color bomb, and the other dot is the color to destroy
+            _matchFinder.MatchPiecesOfColor(_otherDot.tag);
+            isMatched = true;
+        } else if(_otherDot.GetComponent<Dot>().bombType == BombType.Color) {
+            // the other dot is a color bomb, and this dot is the color to destroy
+            _matchFinder.MatchPiecesOfColor(this.gameObject.tag);
+            _otherDot.GetComponent<Dot>().isMatched = true;
+        }
+
         yield return new WaitForSeconds(.25f);
+
         if (_otherDot != null) {
             // Check if this dot or the other dot has a match after the move,
             // and if not, swap them back to their original positions
@@ -187,6 +200,11 @@ public class Dot : MonoBehaviour {
                 break;
         }
         _renderer.SetPropertyBlock(_mpb);
+    }
+
+    public void MakeColorBomb() { 
+        bombType = BombType.Color;
+        GetComponent<SpriteRenderer>().sprite = colorBomb.GetComponent<SpriteRenderer>().sprite;
     }
 
     // Helper method to clear the bomb properties

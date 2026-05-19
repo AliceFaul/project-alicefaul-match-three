@@ -149,5 +149,8 @@ MonoBehaviour:
   targetY: 0
   dotColor: {r: 0.47058827, g: 0.18039216, b: 0.65882355, a: 1}
   isMatched: 0
+  _otherDot: {fileID: 0}
   swipeAngle: 0
   swipeResist: 1
+  bombType: 0
+  colorBomb: {fileID: 1136762387330377056, guid: e648ad5fda3e56347ae6e9be1c1c6fbc, type: 3}

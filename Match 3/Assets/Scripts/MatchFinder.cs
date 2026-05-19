@@ -103,6 +103,20 @@ public class MatchFinder : MonoBehaviour {
     }
 
     // === Powerup Methods ===
+    public void MatchPiecesOfColor(string color) {
+        for(int i = 0; i < _board.width; i++) { 
+            for(int j = 0; j < _board.height; j++) {
+                // check if the piece at this position is the same color as the specified color, and if so, mark it as matched
+                if(_board.allDots[i, j] != null) {
+                    if(_board.allDots[i, j].tag == color) {
+                        // set isMatched to true for the piece at this position to mark it for destruction
+                        _board.allDots[i, j].GetComponent<Dot>().isMatched = true;
+                    }
+                }
+            }
+        }
+    }
+
     private List<GameObject> GetColumnPieces(int column) { 
         List<GameObject> dots = new();
         for(int i = 0; i < _board.height; i++) {
