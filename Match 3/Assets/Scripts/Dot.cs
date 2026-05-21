@@ -159,7 +159,7 @@ public class Dot : MonoBehaviour {
             // this dot is a color bomb, and the other dot is the color to destroy
             _matchFinder.MatchPiecesOfColor(_otherDot.tag);
             isMatched = true;
-        } else if(_otherDot.GetComponent<Dot>().bombType == BombType.Color) {
+        } else if(_otherDot != null && _otherDot.GetComponent<Dot>().bombType == BombType.Color) {
             // the other dot is a color bomb, and this dot is the color to destroy
             _matchFinder.MatchPiecesOfColor(this.gameObject.tag);
             _otherDot.GetComponent<Dot>().isMatched = true;

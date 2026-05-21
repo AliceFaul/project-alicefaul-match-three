@@ -129,6 +129,7 @@ public class Board : MonoBehaviour {
                 }
             }
         }
+        _matchFinder.currentMatches.Clear(); // Clear the current matches list after processing all matches and updating the board
         StartCoroutine(DecreaseRowCo());
     }
 
@@ -139,7 +140,7 @@ public class Board : MonoBehaviour {
             if(_matchFinder.currentMatches.Count == 4 || _matchFinder.currentMatches.Count == 7) {
                 _matchFinder.CheckBombs();
             }
-            _matchFinder.currentMatches.Remove(allDots[column, row]);
+
             // Instantiate the break effect at the position of the matched dot
             var position = allDots[column, row].transform.position;
             position.z = 0f; // Set the z position of the break effect to be in front of the dots for better visibility

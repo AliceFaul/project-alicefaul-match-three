@@ -24,82 +24,88 @@ public class MatchFinder : MonoBehaviour {
         for(int i = 0; i < _board.width; i++) { 
             for(int j = 0; j < _board.height; j++) { 
                 GameObject currentDot = _board.allDots[i, j];
-                if(currentDot != null) { 
+                var currentDotComponent = currentDot != null ? currentDot.GetComponent<Dot>() : null;
+                
+                if (currentDot != null) { 
                     if(i > 0 && i < _board.width - 1) { 
                         GameObject leftDot = _board.allDots[i - 1, j];
+                        var leftDotComponent = leftDot != null ? leftDot.GetComponent<Dot>() : null;
                         GameObject rightDot = _board.allDots[i + 1, j];
-                        if(leftDot != null && rightDot != null) { 
+                        var rightDotComponent = rightDot != null ? rightDot.GetComponent<Dot>() : null;
+
+                        if (leftDot != null && rightDot != null) { 
                             if(leftDot.tag == currentDot.tag && rightDot.tag == currentDot.tag) {
                                 // If any of the three dots in the match is a row bomb, mark all pieces in that row as matched
-                                if(currentDot.GetComponent<Dot>().bombType == BombType.Row ||
-                                    leftDot.GetComponent<Dot>().bombType == BombType.Row || 
-                                    rightDot.GetComponent<Dot>().bombType == BombType.Row) 
-                                {
-                                    currentMatches.Union(GetRowPieces(j));
-                                }
-                                if(currentDot.GetComponent<Dot>().bombType == BombType.Column) { 
-                                    currentMatches.Union(GetColumnPieces(i));
-                                }
-                                if(leftDot.GetComponent<Dot>().bombType == BombType.Column) { 
-                                    currentMatches.Union(GetColumnPieces(i - 1));
-                                }
-                                if(rightDot.GetComponent<Dot>().bombType == BombType.Column) { 
-                                    currentMatches.Union(GetColumnPieces(i + 1));
-                                }
-                                if(!currentMatches.Contains(leftDot)) { 
-                                    currentMatches.Add(leftDot);
-                                }
-                                leftDot.GetComponent<Dot>().isMatched = true;
-                                if(!currentMatches.Contains(rightDot)) { 
-                                    currentMatches.Add(rightDot);
-                                }
-                                rightDot.GetComponent<Dot>().isMatched = true;
-                                if(!currentMatches.Contains(currentDot)) { 
-                                    currentMatches.Add(currentDot);
-                                }
-                                currentDot.GetComponent<Dot>().isMatched = true;
+                                currentMatches.Union(IsRowBomb(leftDotComponent, currentDotComponent, rightDotComponent));
+                                // If any of the three dots in the match is a column bomb, mark all pieces in that column as matched
+                                currentMatches.Union(IsColumnBomb(leftDotComponent, currentDotComponent, rightDotComponent));
+                                GetNearbyPieces(leftDotComponent, currentDotComponent, rightDotComponent);
                             }
                         }
                     }
+
                     if(j > 0 && j < _board.height - 1) { 
                         GameObject upDot = _board.allDots[i, j + 1];
+                        var upDotComponent = upDot != null ? upDot.GetComponent<Dot>() : null;
                         GameObject downDot = _board.allDots[i, j - 1];
-                        if(upDot != null && downDot != null) { 
+                        var downDotComponent = downDot != null ? downDot.GetComponent<Dot>() : null;
+                        
+                        if (upDot != null && downDot != null) { 
                             if(upDot.tag == currentDot.tag && downDot.tag == currentDot.tag) {
                                 // If any of the three dots in the match is a column bomb, mark all pieces in that column as matched
-                                if(currentDot.GetComponent<Dot>().bombType == BombType.Column ||
-                                    upDot.GetComponent<Dot>().bombType == BombType.Column ||
-                                    downDot.GetComponent<Dot>().bombType == BombType.Column) 
-                                { 
-                                    currentMatches.Union(GetColumnPieces(i));
-                                }
-                                if(currentDot.GetComponent<Dot>().bombType == BombType.Row) { 
-                                    currentMatches.Union(GetRowPieces(j));
-                                }
-                                if(upDot.GetComponent<Dot>().bombType == BombType.Row) { 
-                                    currentMatches.Union(GetRowPieces(j + 1));
-                                }
-                                if(downDot.GetComponent<Dot>().bombType == BombType.Row) { 
-                                    currentMatches.Union(GetRowPieces(j - 1));
-                                }
-                                if(!currentMatches.Contains(upDot)) { 
-                                    currentMatches.Add(upDot);
-                                }
-                                upDot.GetComponent<Dot>().isMatched = true;
-                                if(!currentMatches.Contains(downDot)) { 
-                                    currentMatches.Add(downDot);
-                                }
-                                downDot.GetComponent<Dot>().isMatched = true;
-                                if(!currentMatches.Contains(currentDot)) { 
-                                    currentMatches.Add(currentDot);
-                                }
-                                currentDot.GetComponent<Dot>().isMatched = true;
+                                currentMatches.Union(IsColumnBomb(upDotComponent, currentDotComponent, downDotComponent));
+                                // If any of the three dots in the match is a row bomb, mark all pieces in that row as matched
+                                currentMatches.Union(IsRowBomb(upDotComponent, currentDotComponent, downDotComponent));
+                                GetNearbyPieces(upDotComponent, currentDotComponent, downDotComponent);
                             }
                         }
                     }
                 }
             }
         }
+    }
+
+    private void GetNearbyPieces(Dot dot1, Dot dot2, Dot dot3) { 
+        AddToListAndMatch(dot1.gameObject);
+        AddToListAndMatch(dot2.gameObject);
+        AddToListAndMatch(dot3.gameObject);
+    }
+
+    private void AddToListAndMatch(GameObject dot) { 
+        if(!currentMatches.Contains(dot)) { 
+            currentMatches.Add(dot);
+        }
+        dot.GetComponent<Dot>().isMatched = true;
+    }
+
+    // Helper methods to get all pieces in a row if a bomb is present in the match
+    private List<GameObject> IsRowBomb(Dot dot1, Dot dot2, Dot dot3) { 
+        List<GameObject> currentDots = new();
+        if(dot1.bombType == BombType.Row) {
+            currentDots.Union(GetRowPieces(dot1.row));
+        }
+        if(dot2.bombType == BombType.Row) {
+            currentDots.Union(GetRowPieces(dot2.row));
+        }
+        if(dot3.bombType == BombType.Row) {
+            currentDots.Union(GetRowPieces(dot3.row));
+        }
+        return currentDots;
+    }
+
+    // Helper method to get all pieces in a column if a bomb is present in the match
+    private List<GameObject> IsColumnBomb(Dot dot1, Dot dot2, Dot dot3) { 
+        List<GameObject> currentDots = new();
+        if(dot1.bombType == BombType.Column) {
+            currentDots.Union(GetColumnPieces(dot1.column));
+        }
+        if(dot2.bombType == BombType.Column) {
+            currentDots.Union(GetColumnPieces(dot2.column));
+        }
+        if(dot3.bombType == BombType.Column) {
+            currentDots.Union(GetColumnPieces(dot3.column));
+        }
+        return currentDots;
     }
 
     // === Powerup Methods ===
